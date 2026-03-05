@@ -34,7 +34,7 @@
   nav { background: var(--accent); padding: 0 24px; display: flex; align-items: center; box-shadow: 0 2px 12px rgba(45,106,79,0.3); position: sticky; top: 0; z-index: 100; gap: 4px; }
   .nav-logo { font-family: 'Playfair Display', serif; color: #fff; font-size: 1.4rem; padding: 18px 0; margin-right: auto; letter-spacing: -0.5px; }
   .nav-logo span { color: var(--accent2); }
-  .nav-btn { background: none; border: none; color: rgba(255,255,255,0.75); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; padding: 22px 16px; cursor: pointer; position: relative; transition: color 0.2s; white-space: nowrap; }
+  .nav-btn { background: none; border: none; color: rgba(255,255,255,0.75); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; padding: 22px 16px; cursor: pointer; position: relative; transition: color 0.2s; white-space: nowrap; text-align: center; line-height: 1.2; }
   .nav-btn::after { content: ''; position: absolute; bottom: 0; left: 16px; right: 16px; height: 3px; background: var(--accent2); border-radius: 3px 3px 0 0; transform: scaleX(0); transition: transform 0.25s ease; }
   .nav-btn:hover { color: #fff; }
   .nav-btn:hover::after, .nav-btn.active::after { transform: scaleX(1); }
@@ -46,6 +46,15 @@
   .sync-dot.error { background: #e74c3c; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
+  @media (max-width: 480px) {
+    nav { padding: 0 10px; gap: 0; }
+    .nav-logo { font-size: 1rem; padding: 14px 0; }
+    .nav-btn { font-size: 0.8rem; padding: 18px 10px; }
+    .nav-btn::after { left: 10px; right: 10px; }
+    .nav-avatar { width: 26px; height: 26px; margin-left: 4px; }
+    .sync-dot { margin-left: 4px; }
+  }
+
   main { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 48px 24px; }
   .panel { display: none; width: 100%; max-width: 520px; animation: fadeUp 0.3s ease both; }
   .panel.active { display: block; }
@@ -56,7 +65,7 @@
   .input-group { display: flex; gap: 12px; }
   .input-group input[type="text"] { flex: 1; padding: 14px 18px; border: 2px solid var(--border); border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 1rem; background: var(--surface); color: var(--text); transition: border-color 0.2s, box-shadow 0.2s; outline: none; }
   .input-group input[type="text"]:focus { border-color: var(--accent2); box-shadow: 0 0 0 4px rgba(82,183,136,0.12); }
-  .btn-add { padding: 14px 24px; background: var(--accent); color: #fff; border: none; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; white-space: nowrap; }
+  .btn-add { padding: 14px 24px; background: var(--accent); color: #fff; border: none; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; white-space: nowrap; text-align: center; line-height: 1.2; }
   .btn-add:hover { background: #235c42; }
   .btn-add:active { transform: scale(0.97); }
 
@@ -122,7 +131,7 @@
   .btn-close { padding: 12px 20px; background: none; color: var(--muted); border: 1.5px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
   .btn-close:hover { border-color: #ccc; color: var(--text); }
 
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 0.9rem; z-index: 500; transition: transform 0.3s ease; white-space: nowrap; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 0.9rem; z-index: 500; transition: transform 0.3s ease; white-space: nowrap; text-align: center; line-height: 1.2; }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
   #loading-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 999; flex-direction: column; gap: 16px; }
@@ -155,8 +164,8 @@
 <div id="app">
   <nav>
     <div class="nav-logo">🛒 Lista<span>Super</span></div>
-    <button class="nav-btn active" id="btn-nav1" onclick="showPanel('nuevo')">Nuevo Producto</button>
-    <button class="nav-btn" id="btn-nav2" onclick="showPanel('lista')">Lista Super</button>
+    <button class="nav-btn active" id="btn-nav1" onclick="showPanel('nuevo')">Nuevo<br>Producto</button>
+    <button class="nav-btn" id="btn-nav2" onclick="showPanel('lista')">Lista<br>Super</button>
     <div class="sync-dot" id="sync-dot" title="Sincronizado"></div>
     <img class="nav-avatar" id="nav-avatar" src="" alt="U" onclick="confirmLogout()" title="Cerrar sesión" />
   </nav>
@@ -209,12 +218,12 @@
   // ║  ⚠️  REEMPLAZA ESTOS VALORES CON LOS DE TU PROYECTO FIREBASE ║
   // ╚══════════════════════════════════════════════════════════════╝
   const firebaseConfig = {
-    apiKey:            "AIzaSyDHmu0pcsKdEO4nrGUURoRQ5Yr18AYFfj8",
-    authDomain:        "lista-super-563b0.firebaseapp.com",
-    projectId:         "lista-super-563b0",
-    storageBucket:     "lista-super-563b0.firebasestorage.app",
-    messagingSenderId: "565485282599",
-    appId:             "1:565485282599:web:a341c3165d162b30b93502"
+    apiKey:            "REEMPLAZA_apiKey",
+    authDomain:        "REEMPLAZA_authDomain",
+    projectId:         "REEMPLAZA_projectId",
+    storageBucket:     "REEMPLAZA_storageBucket",
+    messagingSenderId: "REEMPLAZA_messagingSenderId",
+    appId:             "REEMPLAZA_appId"
   };
 
   const fbApp = initializeApp(firebaseConfig);
