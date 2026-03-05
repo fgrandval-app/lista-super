@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ListaSuper">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&family=Exo+2:wght@500&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #faf7f2; --surface: #ffffff; --accent: #2d6a4f;
@@ -34,7 +34,7 @@
   nav { background: var(--accent); padding: 0 24px; display: flex; align-items: center; box-shadow: 0 2px 12px rgba(45,106,79,0.3); position: sticky; top: 0; z-index: 100; gap: 4px; }
   .nav-logo { font-family: 'Playfair Display', serif; color: #fff; font-size: 1.4rem; padding: 18px 0; margin-right: auto; letter-spacing: -0.5px; }
   .nav-logo span { color: var(--accent2); }
-  .nav-btn { background: none; border: none; color: rgba(255,255,255,0.75); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; padding: 22px 16px; cursor: pointer; position: relative; transition: color 0.2s; white-space: nowrap; text-align: center; line-height: 1.2; }
+  .nav-btn { background: none; border: none; color: rgba(255,255,255,0.75); font-family: 'Exo 2', sans-serif; font-size: 0.9rem; font-weight: 500; padding: 22px 16px; cursor: pointer; position: relative; transition: color 0.2s; white-space: nowrap; text-align: center; line-height: 1.2; }
   .nav-btn::after { content: ''; position: absolute; bottom: 0; left: 16px; right: 16px; height: 3px; background: var(--accent2); border-radius: 3px 3px 0 0; transform: scaleX(0); transition: transform 0.25s ease; }
   .nav-btn:hover { color: #fff; }
   .nav-btn:hover::after, .nav-btn.active::after { transform: scaleX(1); }
@@ -47,12 +47,12 @@
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
   @media (max-width: 480px) {
-    nav { padding: 0 10px; gap: 0; }
-    .nav-logo { font-size: 1rem; padding: 14px 0; }
-    .nav-btn { font-size: 0.8rem; padding: 18px 10px; }
-    .nav-btn::after { left: 10px; right: 10px; }
-    .nav-avatar { width: 26px; height: 26px; margin-left: 4px; }
-    .sync-dot { margin-left: 4px; }
+    nav { padding: 0 8px; gap: 0; }
+    .nav-logo { font-size: 0.85rem; padding: 12px 0; flex-shrink: 1; min-width: 0; }
+    .nav-btn { font-size: 0.78rem; padding: 14px 8px; flex-shrink: 0; }
+    .nav-btn::after { left: 8px; right: 8px; }
+    .nav-avatar { width: 26px; height: 26px; margin-left: 4px; flex-shrink: 0; }
+    .sync-dot { margin-left: 3px; width: 7px; height: 7px; }
   }
 
   main { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 48px 24px; }
@@ -218,12 +218,12 @@
   // ║  ⚠️  REEMPLAZA ESTOS VALORES CON LOS DE TU PROYECTO FIREBASE ║
   // ╚══════════════════════════════════════════════════════════════╝
   const firebaseConfig = {
-    apiKey:            "AIzaSyDHmu0pcsKdEO4nrGUURoRQ5Yr18AYFfj8",
-    authDomain:        "lista-super-563b0.firebaseapp.com",
-    projectId:         "lista-super-563b0",
-    storageBucket:     "lista-super-563b0.firebasestorage.app",
-    messagingSenderId: "565485282599",
-    appId:             "1:565485282599:web:a341c3165d162b30b93502"
+    apiKey:            "REEMPLAZA_apiKey",
+    authDomain:        "REEMPLAZA_authDomain",
+    projectId:         "REEMPLAZA_projectId",
+    storageBucket:     "REEMPLAZA_storageBucket",
+    messagingSenderId: "REEMPLAZA_messagingSenderId",
+    appId:             "REEMPLAZA_appId"
   };
 
   const fbApp = initializeApp(firebaseConfig);
