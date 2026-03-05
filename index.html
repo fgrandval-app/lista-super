@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lista Super</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2d6a4f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ListaSuper">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf7f2;
+    --surface: #ffffff;
+    --accent: #2d6a4f;
+    --accent2: #52b788;
+    --text: #1a1a1a;
+    --muted: #888;
+    --border: #e8e0d5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav {
+    background: var(--accent);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 12px rgba(45,106,79,0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    color: #fff;
+    font-size: 1.4rem;
+    padding: 18px 0;
+    margin-right: auto;
+    letter-spacing: -0.5px;
+  }
+  .nav-logo span { color: var(--accent2); }
+
+  .nav-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.75);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 22px 20px;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+  }
+  .nav-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 20px; right: 20px;
+    height: 3px;
+    background: var(--accent2);
+    border-radius: 3px 3px 0 0;
+    transform: scaleX(0);
+    transition: transform 0.25s ease;
+  }
+  .nav-btn:hover { color: #fff; }
+  .nav-btn:hover::after { transform: scaleX(1); }
+  .nav-btn.active { color: #fff; }
+  .nav-btn.active::after { transform: scaleX(1); }
+
+  main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 48px 24px;
+  }
+
+  .panel {
+    display: none;
+    width: 100%;
+    max-width: 520px;
+    animation: fadeUp 0.3s ease both;
+  }
+  .panel.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .panel-subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 32px;
+  }
+
+  .input-group {
+    display: flex;
+    gap: 12px;
+  }
+  .input-group input[type="text"] {
+    flex: 1;
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    background: var(--surface);
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .input-group input[type="text"]:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 4px rgba(82,183,136,0.12);
+  }
+  .btn-add {
+    padding: 14px 24px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .btn-add:hover { background: #235c42; }
+  .btn-add:active { transform: scale(0.97); }
+
+  .added-list {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .added-tag {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-left: 4px solid var(--accent2);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeUp 0.2s ease both;
+  }
+
+  .tag-thumb {
+    width: 46px;
+    height: 46px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1.5px solid var(--border);
+  }
+
+  .img-upload-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+    color: var(--muted);
+    font-size: 1.3rem;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    background: #fafafa;
+  }
+  .img-upload-label:hover {
+    border-color: var(--accent2);
+    color: var(--accent);
+    background: #f0faf5;
+  }
+  .img-upload-label.has-img {
+    border-style: solid;
+    border-color: var(--border);
+    padding: 0;
+    overflow: hidden;
+    background: none;
+  }
+  .img-upload-label.has-img:hover {
+    border-color: var(--accent2);
+  }
+  .img-upload-label.has-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .img-upload-input { display: none; }
+
+  /* Popup selector de imagen */
+  .img-btn-wrap { position: relative; flex-shrink: 0; }
+  .img-picker-popup {
+    position: absolute;
+    top: 54px; left: 0;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.13);
+    padding: 14px;
+    z-index: 50;
+    min-width: 250px;
+    animation: fadeUp 0.18s ease both;
+  }
+  .img-picker-popup p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .img-picker-row { display: flex; gap: 8px; margin-bottom: 6px; }
+  .img-picker-row input[type="text"] {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    color: var(--text);
+  }
+  .img-picker-row input[type="text"]:focus { border-color: var(--accent2); }
+  .img-picker-row button {
+    padding: 8px 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .img-picker-row button:hover { background: #235c42; }
+  .img-picker-sep { text-align: center; color: var(--muted); font-size: 0.8rem; margin: 6px 0; }
+  .img-picker-file-label {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    width: 100%; padding: 8px;
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--muted);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .img-picker-file-label:hover { border-color: var(--accent2); color: var(--accent); }
+  .img-picker-close {
+    display: block; margin-top: 8px; text-align: center;
+    font-size: 0.8rem; color: var(--muted); cursor: pointer;
+    background: none; border: none; font-family: 'DM Sans', sans-serif; width: 100%;
+  }
+  .img-picker-close:hover { color: var(--text); }
+
+  .tag-name {
+    flex: 1;
+    font-weight: 500;
+  }
+  .tag-remove {
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0 4px;
+    transition: color 0.15s;
+    flex-shrink: 0;
+  }
+  .tag-remove:hover { color: #e74c3c; }
+
+  /* LISTA SUPER */
+  .list-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .list-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    user-select: none;
+  }
+  .list-item:hover { border-color: var(--accent2); }
+  .list-item.checked {
+    background: #f0faf5;
+    border-color: var(--accent2);
+  }
+
+  .item-name {
+    font-size: 1rem;
+    flex: 1;
+  }
+
+  .list-thumb {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1.5px solid var(--border);
+  }
+
+  .custom-cb {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+    background: #fff;
+  }
+  .list-item.checked .custom-cb {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .custom-cb svg { display: none; }
+  .list-item.checked .custom-cb svg { display: block; }
+
+  .empty-msg {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 0;
+    font-size: 0.95rem;
+  }
+  .empty-msg strong { display: block; font-size: 2rem; margin-bottom: 8px; }
+
+  .btn-super {
+    width: 100%;
+    padding: 16px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(45,106,79,0.25);
+  }
+  .btn-super:hover { background: #235c42; box-shadow: 0 6px 20px rgba(45,106,79,0.35); }
+  .btn-super:active { transform: scale(0.98); }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.visible { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 36px;
+    max-width: 360px;
+    width: 90%;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.25s ease;
+  }
+  .modal-overlay.visible .modal { transform: scale(1); }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .modal-img-wrap {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 16px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border);
+  }
+  .modal-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-img-placeholder { font-size: 3rem; }
+
+  .product-display {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--text);
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    animation: pop 0.3s ease;
+  }
+
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.7); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .product-counter {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+  }
+
+  .modal-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .btn-next {
+    padding: 12px 28px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-next:hover { background: #235c42; }
+
+  .btn-close {
+    padding: 12px 20px;
+    background: none;
+    color: var(--muted);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-close:hover { border-color: #ccc; color: var(--text); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">🛒 Lista<span>Super</span></div>
+  <button class="nav-btn active" id="btn-nav1" onclick="showPanel('nuevo')">Nuevo Producto</button>
+  <button class="nav-btn" id="btn-nav2" onclick="showPanel('lista')">Lista Super</button>
+</nav>
+
+<main>
+  <!-- PANEL 1 -->
+  <div class="panel active" id="panel-nuevo">
+    <h1 class="panel-title">Nuevo Producto</h1>
+    <p class="panel-subtitle">Añade artículos a tu lista de la compra</p>
+    <div class="input-group">
+      <input type="text" id="producto-input" placeholder="Ej: Leche, Pan, Manzanas…" autocomplete="off" />
+      <button class="btn-add" onclick="addProduct()">Añadir</button>
+    </div>
+    <div class="added-list" id="added-list"></div>
+  </div>
+
+  <!-- PANEL 2 -->
+  <div class="panel" id="panel-lista">
+    <h1 class="panel-title">Lista Super</h1>
+    <p class="panel-subtitle">Marca los productos que necesitas comprar</p>
+    <div class="list-items" id="list-items"></div>
+    <button class="btn-super" onclick="startSuper()">🛒 &nbsp;¡Super!</button>
+  </div>
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">🛒 Tu compra</div>
+    <div class="modal-img-wrap">
+      <span class="modal-img-placeholder" id="modal-placeholder">🛍️</span>
+      <img id="modal-img" src="" alt="" style="display:none;" />
+    </div>
+    <div class="product-display" id="product-display"></div>
+    <div class="product-counter" id="product-counter"></div>
+    <div class="modal-btns">
+      <button class="btn-next" id="btn-modal-action">Siguiente →</button>
+      <button class="btn-close" onclick="closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'listasuper_products';
+
+  // ── Persistencia ──────────────────────────────────────────────
+  function saveProducts() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(products)); } catch(e) {}
+  }
+  function loadProducts() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch(e) { return []; }
+  }
+
+  // ── Estado ────────────────────────────────────────────────────
+  let products = loadProducts(); // { name, imgDataUrl }
+  let modalQueue = [];
+  let modalIdx = 0;
+
+  // Render inicial al cargar la página
+  renderAddedList();
+
+  // ── Navegación ────────────────────────────────────────────────
+  function showPanel(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    if (name === 'nuevo') {
+      document.getElementById('btn-nav1').classList.add('active');
+    } else {
+      document.getElementById('btn-nav2').classList.add('active');
+      renderList();
+    }
+  }
+
+  // ── Añadir / Eliminar ─────────────────────────────────────────
+  function addProduct() {
+    const input = document.getElementById('producto-input');
+    const val = input.value.trim();
+    if (!val) return;
+    products.push({ name: val, imgDataUrl: null });
+    input.value = '';
+    input.focus();
+    saveProducts();
+    renderAddedList();
+  }
+
+  document.getElementById('producto-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addProduct();
+  });
+
+  function handleImageUpload(idx, inputEl) {
+    const file = inputEl.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      products[idx].imgDataUrl = e.target.result;
+      saveProducts();
+      renderAddedList();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ── Image picker popup ────────────────────────────────────────
+  let openPickerIdx = null;
+
+  function togglePicker(event, idx) {
+    event.stopPropagation();
+    closePicker();
+    openPickerIdx = idx;
+    const wrap = event.currentTarget.closest('.img-btn-wrap');
+    const popup = document.createElement('div');
+    popup.className = 'img-picker-popup';
+    popup.id = 'img-picker-popup';
+    popup.innerHTML = `
+      <p>Imagen del producto</p>
+      <div class="img-picker-row">
+        <input type="text" id="url-input-${idx}" placeholder="Pega una URL de imagen…" />
+        <button onclick="applyUrl(${idx})">OK</button>
+      </div>
+      <div class="img-picker-sep">— o —</div>
+      <label class="img-picker-file-label">
+        📁 Subir desde el ordenador
+        <input type="file" accept="image/*" style="display:none" onchange="handleImageUpload(${idx}, this); closePicker();" />
+      </label>
+      <button class="img-picker-close" onclick="closePicker()">Cancelar</button>
+    `;
+    wrap.appendChild(popup);
+    setTimeout(() => {
+      const urlInput = document.getElementById(`url-input-${idx}`);
+      if (urlInput) urlInput.focus();
+    }, 50);
+  }
+
+  function applyUrl(idx) {
+    const input = document.getElementById(`url-input-${idx}`);
+    const url = input ? input.value.trim() : '';
+    if (!url) return;
+    products[idx].imgDataUrl = url;
+    saveProducts();
+    closePicker();
+    renderAddedList();
+  }
+
+  function closePicker() {
+    const p = document.getElementById('img-picker-popup');
+    if (p) p.remove();
+    openPickerIdx = null;
+  }
+
+  document.addEventListener('click', e => {
+    const popup = document.getElementById('img-picker-popup');
+    if (popup && !popup.contains(e.target)) closePicker();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closePicker();
+  });
+
+  function renderAddedList() {
+    const el = document.getElementById('added-list');
+    if (!products.length) { el.innerHTML = ''; return; }
+    const sorted = products
+      .map((p, i) => ({ ...p, originalIdx: i }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }));
+    el.innerHTML = sorted.map(p => `
+      <div class="added-tag">
+        <div class="img-btn-wrap">
+          <div class="img-upload-label ${p.imgDataUrl ? 'has-img' : ''}"
+               title="${p.imgDataUrl ? 'Cambiar imagen' : 'Añadir imagen'}"
+               onclick="togglePicker(event, ${p.originalIdx})">
+            ${p.imgDataUrl ? `<img class="tag-thumb" src="${p.imgDataUrl}" alt="${p.name}" />` : `📷`}
+          </div>
+        </div>
+        <span class="tag-name">${p.name}</span>
+        <button class="tag-remove" onclick="removeProduct(${p.originalIdx})">✕</button>
+      </div>
+    `).join('');
+  }
+
+  function removeProduct(idx) {
+    products.splice(idx, 1);
+    saveProducts();
+    renderAddedList();
+  }
+
+  // ── Lista Super ───────────────────────────────────────────────
+  function renderList() {
+    const el = document.getElementById('list-items');
+    if (!products.length) {
+      el.innerHTML = `<div class="empty-msg"><strong>🛍️</strong>Aún no has añadido productos.<br>Ve a <em>Nuevo Producto</em> para empezar.</div>`;
+      return;
+    }
+    const sorted = products
+      .map((p, i) => ({ ...p, originalIdx: i }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }));
+    el.innerHTML = sorted.map(p => `
+      <div class="list-item" id="item-${p.originalIdx}" onclick="toggleItem(${p.originalIdx})">
+        <div class="custom-cb">
+          <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
+            <path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        ${p.imgDataUrl ? `<img class="list-thumb" src="${p.imgDataUrl}" alt="${p.name}" />` : ''}
+        <span class="item-name">${p.name}</span>
+      </div>
+    `).join('');
+  }
+
+  function toggleItem(idx) {
+    document.getElementById('item-' + idx).classList.toggle('checked');
+  }
+
+  // ── Modal ─────────────────────────────────────────────────────
+  function startSuper() {
+    const checked = [];
+    document.querySelectorAll('.list-item.checked').forEach(el => {
+      const idx = parseInt(el.id.replace('item-', ''));
+      checked.push(products[idx]);
+    });
+    if (!checked.length) {
+      alert('Marca al menos un producto para ir al super 😊');
+      return;
+    }
+    modalQueue = checked;
+    modalIdx = 0;
+    showModalProduct();
+    document.getElementById('modal-overlay').classList.add('visible');
+  }
+
+  function showModalProduct() {
+    const p = modalQueue[modalIdx];
+    const display = document.getElementById('product-display');
+    const counter = document.getElementById('product-counter');
+    const actionBtn = document.getElementById('btn-modal-action');
+    const img = document.getElementById('modal-img');
+    const placeholder = document.getElementById('modal-placeholder');
+
+    display.style.animation = 'none';
+    display.offsetHeight;
+    display.style.animation = 'pop 0.3s ease';
+    display.textContent = p.name;
+    counter.textContent = `Producto ${modalIdx + 1} de ${modalQueue.length}`;
+
+    if (p.imgDataUrl) {
+      img.src = p.imgDataUrl;
+      img.style.display = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      img.style.display = 'none';
+      placeholder.style.display = 'block';
+    }
+
+    const isLast = modalIdx >= modalQueue.length - 1;
+    actionBtn.textContent = isLast ? '✓ Listo' : 'Siguiente →';
+    actionBtn.onclick = isLast ? closeModal : nextProduct;
+  }
+
+  function nextProduct() {
+    modalIdx++;
+    if (modalIdx < modalQueue.length) showModalProduct();
+    else closeModal();
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('visible');
+  }
+
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // ── Service Worker (PWA) ──────────────────────────────────────
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
