@@ -91,7 +91,7 @@
 
   /* Popup imagen */
   .img-btn-wrap { position: relative; flex-shrink: 0; }
-  .img-picker-popup { position: absolute; top: 54px; left: 0; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,0.15); padding: 14px; z-index: 50; min-width: 260px; animation: fadeUp 0.18s ease both; }
+  .img-picker-popup { position: absolute; left: 0; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,0.15); padding: 14px; z-index: 50; min-width: 260px; animation: fadeUp 0.18s ease both; }
   .img-picker-popup p { font-size: 0.78rem; color: var(--muted); margin-bottom: 8px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
   .img-picker-row { display: flex; gap: 8px; margin-bottom: 6px; }
   .img-picker-row input[type="text"] { flex: 1; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none; color: var(--text); }
@@ -262,7 +262,18 @@
       </label>
       <button class="img-picker-close" onclick="closePicker()">Cancelar</button>
     `;
+    // Posición inicial abajo para medir
+    popup.style.top = '54px';
+    popup.style.bottom = 'auto';
     wrap.appendChild(popup);
+
+    // Si no hay espacio abajo, abrir hacia arriba
+    const rect = popup.getBoundingClientRect();
+    if (rect.bottom > window.innerHeight - 16) {
+      popup.style.top = 'auto';
+      popup.style.bottom = '54px';
+    }
+
     setTimeout(() => { const u = document.getElementById(`url-input-${idx}`); if(u) u.focus(); }, 50);
   }
 
