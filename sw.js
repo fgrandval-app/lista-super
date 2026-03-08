@@ -1,4 +1,4 @@
-const CACHE = 'listasuper-v11';
+const CACHE = 'listasuper-v12';
 const ASSETS = [
   './index.html',
   './manifest.json',
